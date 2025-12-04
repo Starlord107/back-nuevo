@@ -1,0 +1,17 @@
+{
+  "name": "backend-carta",
+  "version": "1.0.0",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node api/index.js"
+  },
+  "dependencies": {
+    "cloudinary": "^2.8.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "node-thermal-printer": "^4.5.0",
+    "pg": "^8.16.3",
+    "sqlite3": "^5.1.7"
+  }
+}
