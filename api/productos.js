@@ -1,4 +1,4 @@
-const db = require("../db");
+const db = require("./db");
 const cors=require("../_cors");
 
 module.exports = async (req, res) => {
