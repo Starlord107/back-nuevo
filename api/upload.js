@@ -1,4 +1,4 @@
-const cors = require("./_cors");
+const cors = require("../_cors");
 const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({

@@ -1,5 +1,5 @@
 const db = require("../db");
-const cors = require("./_cors");
+const cors = require("../_cors");
 const { imprimirTicket } = require("../utils/printer");
 
 module.exports = async (req, res) => {
