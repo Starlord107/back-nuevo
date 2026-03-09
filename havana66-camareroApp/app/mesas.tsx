@@ -1,28 +1,25 @@
-import { useEffect, useState } from "react";
+import { useState, useCallback } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { API_BASE_URL } from "../services/api";
 
 type Mesa = {
   id: number;
   nombre: string;
-  estado?: string;
+  estado: "libre" | "ocupada";
 };
 
 export default function MesasScreen() {
   const [mesas, setMesas] = useState<Mesa[]>([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    cargarMesas();
-  }, []);
 
   const cargarMesas = async () => {
     try {
@@ -36,9 +33,69 @@ export default function MesasScreen() {
     }
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      cargarMesas();
+    }, [])
+  );
+
   const seleccionarMesa = (mesa: Mesa) => {
     router.push(`/carta/${mesa.id}`);
   };
+
+ const cerrarMesa = async (id: number) => {
+  try {
+    const resPedidos = await fetch(`${API_BASE_URL}/api/pedidos/mesa/${id}`);
+    const pedidos = await resPedidos.json();
+
+    const total = Array.isArray(pedidos)
+      ? pedidos.reduce((accPedido: number, pedido: any) => {
+          const totalPedido = Array.isArray(pedido.items)
+            ? pedido.items.reduce(
+                (accItem: number, item: any) =>
+                  accItem + (Number(item.precio) || 0) * (Number(item.cantidad) || 0),
+                0
+              )
+            : 0;
+
+          return accPedido + totalPedido;
+        }, 0)
+      : 0;
+
+    Alert.alert(
+      "Cobrar mesa",
+      `Total a cobrar: ${total.toFixed(2)} €`,
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Cobrar y cerrar",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await fetch(`${API_BASE_URL}/api/pedidos/mesa/${id}`, {
+                method: "DELETE",
+              });
+
+              await fetch(`${API_BASE_URL}/api/mesas/${id}/estado`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ estado: "libre" }),
+              });
+
+              cargarMesas();
+            } catch (error) {
+              console.log("Error cerrando mesa", error);
+              Alert.alert("Error", "No se pudo cerrar la mesa");
+            }
+          },
+        },
+      ]
+    );
+  } catch (error) {
+    console.log("Error obteniendo total de la mesa", error);
+    Alert.alert("Error", "No se pudo calcular el total de la mesa");
+  }
+};
 
   if (loading) {
     return (
@@ -57,18 +114,34 @@ export default function MesasScreen() {
         keyExtractor={(item) => String(item.id)}
         numColumns={2}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.mesaCard,
-              { backgroundColor: item.estado === "ocupada" ? "#dc2626" : "#16a34a" },
-            ]}
-            onPress={() => seleccionarMesa(item)}
-          >
-            <Text style={styles.mesaText}>{item.nombre}</Text>
-            <Text style={styles.mesaSubtext}>
-              {item.estado === "ocupada" ? "Ocupada" : "Libre"}
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.cardWrapper}>
+            <TouchableOpacity
+              style={[
+                styles.mesaCard,
+                {
+                  backgroundColor:
+                    item.estado === "ocupada" ? "#dc2626" : "#16a34a",
+                },
+              ]}
+              onPress={() => seleccionarMesa(item)}
+            >
+              <Text style={styles.mesaText}>{item.nombre}</Text>
+              <Text style={styles.mesaSubtext}>
+                {item.estado === "ocupada" ? "Ocupada" : "Libre"}
+              </Text>
+            </TouchableOpacity>
+
+            {item.estado === "ocupada" && (
+              <TouchableOpacity
+                style={styles.cerrarMesaButton}
+                onPress={() => cerrarMesa(item.id)}
+              >
+                <Text style={styles.cerrarMesaButtonText}>
+                  Cerrar Mesa
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
         )}
       />
     </View>
@@ -94,9 +167,11 @@ const styles = StyleSheet.create({
     color: "#1f40ff",
     marginBottom: 18,
   },
-  mesaCard: {
+  cardWrapper: {
     flex: 1,
     margin: 8,
+  },
+  mesaCard: {
     minHeight: 110,
     borderRadius: 20,
     justifyContent: "center",
@@ -112,5 +187,17 @@ const styles = StyleSheet.create({
     color: "#fff",
     marginTop: 6,
     fontSize: 14,
+  },
+  cerrarMesaButton: {
+    marginTop: 8,
+    backgroundColor: "#1f2937",
+    paddingVertical: 10,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  cerrarMesaButtonText: {
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "600",
   },
 });

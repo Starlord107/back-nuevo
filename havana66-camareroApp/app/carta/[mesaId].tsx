@@ -185,6 +185,13 @@ export default function CartaScreen() {
       if (!res.ok) {
         throw new Error(data.error || "No se pudo enviar el pedido");
       }
+      await fetch(`${API_BASE_URL}/api/mesas/${mesaId}/estado`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ estado: "ocupada" }),
+      });
 
       setCarrito([]);
       setCarritoVisible(false);
@@ -203,7 +210,7 @@ export default function CartaScreen() {
       </View>
     );
   }
-
+  
   return (
     <SafeAreaView style={styles.container}>
      <View style={styles.header}>
