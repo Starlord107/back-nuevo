@@ -1,5 +1,6 @@
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+
 type Props = {
   categoriaPrincipal: string;
   setCategoriaPrincipal: (value: string) => void;
@@ -25,13 +26,13 @@ export default function CategoriaTabs({
     if (!sub) {
       if (categoria === "Bebidas") {
         return selected
-          ? require("../assets/bebidas/bebidawhite.png")
-          : require("../assets/bebidas/bebida.png");
+          ? require("../public/bebidas/bebidawhite.png")
+          : require("../public/bebidas/bebida.png");
       }
 
       return selected
-        ? require("../assets/comidas/sswhite.png")
-        : require("../assets/comidas/ss.png");
+        ? require("../public/comidas/sswhite.png")
+        : require("../public/comidas/ss.png");
     }
 
     const baseFolder = categoria === "Comidas" ? "comidas" : "bebidas";
