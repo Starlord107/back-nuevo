@@ -12,6 +12,7 @@ router.get("/", async (req, res) => {
 });
 router.post("/login", async (req, res) => {
     const { nombre, password } = req.body;
+    console.log(nombre, password);
 
     try {
         const result = await db.query(
