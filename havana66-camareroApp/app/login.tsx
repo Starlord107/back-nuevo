@@ -18,7 +18,7 @@ export default function LoginScreen() {
     try {
       console.log("VALOR NOMBRE ANTES DEL FETCH:", nombre);
       console.log("BODY QUE ENVÍO:", JSON.stringify({ nombre, password }));
-
+        
       const res = await fetch(`${API_BASE_URL}/api/camareros/login`, {
         method: "POST",
         headers: {
@@ -43,7 +43,7 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Havana66</Text>
+      <Text style={styles.title}>Login Nuevo 999</Text>
       <Text style={styles.subtitle}>Acceso Camareros</Text>
 
       <TextInput
