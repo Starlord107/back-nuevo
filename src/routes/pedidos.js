@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
+
 router.post("/", async (req, res) => {
     const { mesa_id, productos, total } = req.body;
 
@@ -20,6 +21,69 @@ router.post("/", async (req, res) => {
         }
 
         res.json({ ok: true, pedidoId });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+router.get("/mesa/:mesaId", async (req, res) => {
+    const { mesaId } = req.params;
+
+    try {
+        const pedidosResult = await db.query(
+            "SELECT * FROM pedidos WHERE mesa_id = $1 ORDER BY id DESC",
+            [mesaId]
+        );
+
+        const pedidos = [];
+
+        for (const pedido of pedidosResult.rows) {
+            const itemsResult = await db.query(
+                `
+                SELECT 
+                    pi.id,
+                    pi.cantidad,
+                    p.id as producto_id,
+                    p.nombre,
+                    p.precio,
+                    p.imagen,
+                    p.subcategoria,
+                    p.categoria
+                FROM pedido_items pi
+                JOIN productos p ON p.id = pi.producto_id
+                WHERE pi.pedido_id = $1
+                `,
+                [pedido.id]
+            );
+
+            pedidos.push({
+                ...pedido,
+                items: itemsResult.rows
+            });
+        }
+
+        res.json(pedidos);
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+router.delete("/mesa/:mesaId", async (req, res) => {
+    const { mesaId } = req.params;
+
+    try {
+        const pedidosResult = await db.query(
+            "SELECT id FROM pedidos WHERE mesa_id = $1",
+            [mesaId]
+        );
+
+        for (const pedido of pedidosResult.rows) {
+            await db.query("DELETE FROM pedido_items WHERE pedido_id = $1", [pedido.id]);
+        }
+
+        await db.query("DELETE FROM pedidos WHERE mesa_id = $1", [mesaId]);
+
+        res.json({ ok: true });
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
