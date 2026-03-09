@@ -11,14 +11,19 @@ router.get("/", async (req, res) => {
     }
 });
 router.post("/login", async (req, res) => {
+    console.log("REQ.BODY COMPLETO:", req.body);
+
     const { nombre, password } = req.body;
-    console.log(nombre, password);
+    console.log("NOMBRE:", nombre);
+    console.log("PASSWORD:", password);
 
     try {
         const result = await db.query(
             "SELECT id, nombre FROM camareros WHERE nombre = $1 AND password = $2",
             [nombre, password]
         );
+
+        console.log("RESULTADO SQL:", result.rows);
 
         if (result.rows.length === 0) {
             return res.status(401).json({ error: "Credenciales incorrectas" });
@@ -29,6 +34,7 @@ router.post("/login", async (req, res) => {
             usuario: result.rows[0]
         });
     } catch (e) {
+        console.error("ERROR LOGIN:", e);
         res.status(500).json({ error: e.message });
     }
 });
