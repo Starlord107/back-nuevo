@@ -11,7 +11,7 @@ import { router } from "expo-router";
 import { API_BASE_URL } from "../services/api";
 
 export default function LoginScreen() {
-  const [usuario, setUsuario] = useState("");
+  const [nombre, setNombre] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
@@ -21,7 +21,7 @@ export default function LoginScreen() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ nombre: usuario, password }),
+        body: JSON.stringify({ nombre, password }),
       });
 
       const data = await res.json();
