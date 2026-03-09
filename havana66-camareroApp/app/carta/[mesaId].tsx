@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -206,20 +206,23 @@ export default function CartaScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Mesa {mesaId}</Text>
+     <View style={styles.header}>
+  <TouchableOpacity style={styles.backButton} onPress={() => router.push("/mesas")}>
+    <Text style={styles.backButtonText}>← Mesas</Text>
+  </TouchableOpacity>
 
-        <TouchableOpacity style={styles.cartButton} onPress={() => setCarritoVisible(true)}>
-          <Text style={styles.cartText}>Carrito ({carritoCount})</Text>
-        </TouchableOpacity>
-      </View>
+  <Text style={styles.title}>Mesa {mesaId}</Text>
+
+  <TouchableOpacity style={styles.cartButton} onPress={() => setCarritoVisible(true)}>
+    <Text style={styles.cartText}>Carrito ({carritoCount})</Text>
+  </TouchableOpacity>
+</View>
 
       <CategoriaTabs
         categoriaPrincipal={categoriaPrincipal}
         setCategoriaPrincipal={setCategoriaPrincipal}
         categoriaSecundaria={categoriaSecundaria}
         setCategoriaSecundaria={setCategoriaSecundaria}
-        subcategoriasDisponibles={subcategoriasDisponibles}
       />
 
       <FlatList
@@ -254,6 +257,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  backButton: {
+  backgroundColor: "#e5edff",
+  paddingHorizontal: 12,
+  paddingVertical: 8,
+  borderRadius: 12,
+},
+backButtonText: {
+  color: "#1f40ff",
+  fontWeight: "700",
+},
   header: {
     paddingHorizontal: 16,
     paddingTop: 16,
