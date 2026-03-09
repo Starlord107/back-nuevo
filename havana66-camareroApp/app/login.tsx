@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { API_BASE_URL } from "../services/api";
+import LogoIcon from "../components/LogoIcon";
 
 export default function LoginScreen() {
   const [nombre, setNombre] = useState("");
@@ -43,8 +44,8 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login Nuevo 999</Text>
-      <Text style={styles.subtitle}>Acceso Camareros</Text>
+      <LogoIcon size={120} />
+      <Text style={styles.title}>Havana 66</Text>
 
       <TextInput
         style={styles.input}

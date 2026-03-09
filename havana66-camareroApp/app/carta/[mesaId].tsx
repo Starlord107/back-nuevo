@@ -4,12 +4,12 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../../services/api";
 import CategoriaTabs from "../../components/CategoriaTabs";
 import ProductoCard from "../../components/ProductoCard";
@@ -236,7 +236,7 @@ export default function CartaScreen() {
       setCarritoVisible(false);
       await cargarPedidosMesa();
 
-      Alert.alert("Pedido enviado", `Pedido #${data.pedidoId} enviado correctamente`);
+      Alert.alert("Pedido enviado de la mesa " + mesaId, `Pedido enviado correctamente a la cocina`);
     } catch (error: any) {
       Alert.alert("Error", error.message || "No se pudo enviar el pedido");
     }

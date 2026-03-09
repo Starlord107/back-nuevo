@@ -88,5 +88,48 @@ router.delete("/mesa/:mesaId", async (req, res) => {
         res.status(500).json({ error: e.message });
     }
 });
+router.get("/pendientes-impresion", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+        p.id AS pedido_id,
+        p.mesa_id,
+        p.fecha,
+        p.total,
+        pi.producto_id,
+        pi.cantidad,
+        pr.nombre,
+        pr.precio,
+        pr.categoria
+      FROM pedidos p
+      JOIN pedido_items pi ON pi.pedido_id = p.id
+      JOIN productos pr ON pr.id = pi.producto_id
+      WHERE p.impreso = FALSE
+      ORDER BY p.id ASC
+    `);
+
+    res.json(result.rows);
+
+  } catch (error) {
+    console.error("Error obteniendo pedidos pendientes:", error);
+    res.status(500).json({ error: "Error obteniendo pedidos pendientes" });
+  }
+});
+router.put("/:id/marcar-impreso", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await db.query(
+      "UPDATE pedidos SET impreso = TRUE WHERE id = $1",
+      [id]
+    );
+
+    res.json({ ok: true });
+
+  } catch (error) {
+    console.error("Error marcando pedido como impreso:", error);
+    res.status(500).json({ error: "Error actualizando pedido" });
+  }
+});
 
 module.exports = router;
