@@ -16,7 +16,7 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/camareros/login`, {
+const res = await fetch("https://backend-carta.onrender.com/api/camareros/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -25,6 +25,7 @@ export default function LoginScreen() {
       });
 
       const data = await res.json();
+      console.log("Respuesta Login:", data);
 
       if (!res.ok) {
         Alert.alert("Error", data.error || "Credenciales incorrectas");
