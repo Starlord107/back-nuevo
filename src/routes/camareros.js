@@ -32,5 +32,9 @@ router.post("/login", async (req, res) => {
         res.status(500).json({ error: e.message });
     }
 });
+router.get("/test", (req, res) => {
+    console.log("ENTRO EN /api/camareros/test");
+    res.json({ ok: true, mensaje: "ruta test camareros" });
+});
 
 module.exports = router;
