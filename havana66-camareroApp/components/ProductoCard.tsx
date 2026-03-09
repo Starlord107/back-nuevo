@@ -9,12 +9,12 @@ type Formato = {
 type Producto = {
   id: number;
   nombre: string;
-  precio: number;
+  precio?: number;
   categoria: string;
   imagen: string | null;
   subcategoria: string;
   descripcioninfo: string;
-  formatos: Formato[];
+  formatos?: Formato[];
 };
 
 type Props = {
@@ -23,14 +23,23 @@ type Props = {
 };
 
 export default function ProductoCard({ producto, añadirAlCarrito }: Props) {
+  const formatos = producto.formatos ?? [];
+
+  const precioMostrar =
+    typeof producto.precio === "number"
+      ? producto.precio
+      : formatos.length > 0
+      ? formatos[0].precio
+      : 0;
+
   const handleAdd = () => {
-    if (producto.formatos && producto.formatos.length > 0) {
+    if (formatos.length > 0) {
       Alert.alert(
         producto.nombre,
         "Selecciona un formato",
         [
-          ...producto.formatos.map((f) => ({
-            text: `${f.nombre} - ${f.precio.toFixed(2)}€`,
+          ...formatos.map((f) => ({
+            text: `${f.nombre} - ${Number(f.precio).toFixed(2)}€`,
             onPress: () => añadirAlCarrito(producto, f),
           })),
           { text: "Cancelar", style: "cancel" as const },
@@ -60,7 +69,7 @@ export default function ProductoCard({ producto, añadirAlCarrito }: Props) {
         </Text>
       )}
 
-      <Text style={styles.price}>Desde {producto.precio.toFixed(2)}€</Text>
+      <Text style={styles.price}>Desde {Number(precioMostrar).toFixed(2)}€</Text>
 
       <TouchableOpacity style={styles.button} onPress={handleAdd}>
         <Text style={styles.buttonText}>Añadir</Text>
