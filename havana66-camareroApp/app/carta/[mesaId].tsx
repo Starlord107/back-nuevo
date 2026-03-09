@@ -31,7 +31,7 @@ type Producto = {
   imagen: string | null;
   subcategoria: string;
   descripcioninfo: string;
-  formatos: Formato[];
+  formatos?: Formato[];
 };
 
 type CarritoItem = {
@@ -90,36 +90,35 @@ export default function CartaScreen() {
       (categoriaSecundaria === "" || p.subcategoria === categoriaSecundaria)
   );
 
-  const añadirAlCarrito = (producto: Producto, formato?: Formato) => {
-    const precioFinal = formato ? formato.precio : producto.precio;
-    const nombreFormato = formato ? formato.nombre : null;
-    const clave = `${producto.id}-${nombreFormato || "base"}`;
+  const añadirAlCarrito = (producto: any, cantidadElegida: number) => {
+  setCarrito((prev) => {
+    const existente = prev.find(
+      (item) =>
+        item.id === producto.id &&
+        (item.formato || null) === (producto.formato || null)
+    );
 
-    setCarrito((prev) => {
-      const existente = prev.find(
-        (item) => `${item.id}-${item.formato || "base"}` === clave
+    if (existente) {
+      return prev.map((item) =>
+        item.id === producto.id &&
+        (item.formato || null) === (producto.formato || null)
+          ? { ...item, cantidad: item.cantidad + cantidadElegida }
+          : item
       );
+    }
 
-      if (existente) {
-        return prev.map((item) =>
-          `${item.id}-${item.formato || "base"}` === clave
-            ? { ...item, cantidad: item.cantidad + 1 }
-            : item
-        );
-      }
-
-      return [
-        ...prev,
-        {
-          id: producto.id,
-          nombre: producto.nombre,
-          precio: precioFinal,
-          cantidad: 1,
-          formato: nombreFormato,
-        },
-      ];
-    });
-  };
+    return [
+      ...prev,
+      {
+        id: producto.id,
+        nombre: producto.nombre,
+        precio: Number(producto.precio)||0,
+        cantidad: cantidadElegida,
+        formato: producto.formato || null,
+      },
+    ];
+  });
+};
 
   const aumentarCantidad = (id: number, formato?: string | null) => {
     setCarrito((prev) =>
@@ -151,7 +150,10 @@ export default function CartaScreen() {
     );
   };
 
-  const total = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+  const total = carrito.reduce(
+    (acc, item) => acc + (Number(item.precio) || 0) * item.cantidad,
+    0
+  );
 
   const enviarPedido = async () => {
     if (carrito.length === 0) {
@@ -233,7 +235,6 @@ export default function CartaScreen() {
         visible={carritoVisible}
         onClose={() => setCarritoVisible(false)}
         carrito={carrito}
-        total={total}
         aumentarCantidad={aumentarCantidad}
         disminuirCantidad={disminuirCantidad}
         eliminarProducto={eliminarProducto}
