@@ -50,7 +50,8 @@ export default function CartaScreen() {
 
   const [categoriaPrincipal, setCategoriaPrincipal] = useState("Bebidas");
   const [categoriaSecundaria, setCategoriaSecundaria] = useState("");
-
+const [pedidoExistente, setPedidoExistente] = useState<any>(null);
+const [mostrarPedidoActual, setMostrarPedidoActual] = useState(false);
   const [carrito, setCarrito] = useState<CarritoItem[]>([]);
   const [carritoVisible, setCarritoVisible] = useState(false);
 
@@ -72,14 +73,32 @@ export default function CartaScreen() {
   };
 
   const cargarPedidosMesa = async () => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/pedidos/mesa/${mesaId}`);
-      const data = await res.json();
-      console.log(data);
-    } catch (error) {
-      Alert.alert("Error", "No se pudieron cargar los pedidos");
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/pedidos/mesa/${mesaId}`);
+    const data = await res.json();
+
+    if (!Array.isArray(data) || data.length === 0) {
+      setPedidoExistente([]);
+      return;
     }
-  };
+
+    const pedidosAgrupados = data.map((pedido: any) => {
+      if (!Array.isArray(pedido.items)) return [];
+
+      return pedido.items.map((item: any) => ({
+        id: item.producto_id,
+        nombre: item.nombre,
+        precio: Number(item.precio) || 0,
+        cantidad: Number(item.cantidad) || 0,
+        formato: item.formato || null,
+      }));
+    });
+
+    setPedidoExistente(pedidosAgrupados);
+  } catch (error) {
+    console.log("Error cargando pedido existente", error);
+  }
+};
 
   const subcategoriasDisponibles = useMemo(() => {
     const filtrados = productos.filter((p) => p.categoria === categoriaPrincipal);
@@ -206,6 +225,7 @@ export default function CartaScreen() {
 
       setCarrito([]);
       setCarritoVisible(false);
+      await cargarPedidosMesa();
       Alert.alert("Pedido enviado", `Pedido #${data.pedidoId} enviado correctamente`);
     } catch (error: any) {
       Alert.alert("Error", error.message || "No se pudo enviar el pedido");
@@ -236,6 +256,53 @@ export default function CartaScreen() {
   </TouchableOpacity>
 </View>
 
+{pedidoExistente.length > 0 && (
+  <View style={styles.pedidoActualBox}>
+    <TouchableOpacity
+      style={styles.pedidoActualHeader}
+      onPress={() => setMostrarPedidoActual(!mostrarPedidoActual)}
+    >
+      <Text style={styles.pedidoActualTitle}>
+        {mostrarPedidoActual ? "Ocultar pedido actual" : "Ver pedido actual de la mesa"}
+      </Text>
+      <Text style={styles.pedidoActualArrow}>
+        {mostrarPedidoActual ? "▲" : "▼"}
+      </Text>
+    </TouchableOpacity>
+
+    {mostrarPedidoActual && (
+      <View style={styles.pedidoActualContenido}>
+        {pedidoExistente.map((pedido: any[], index: number) => (
+          <View key={index} style={styles.pedidoGrupo}>
+            <Text style={styles.pedidoGrupoTitulo}>
+              {index === 0 ? "Último pedido" : `Pedido ${pedidoExistente.length - index}`}
+            </Text>
+
+            {pedido.map((item: any, idx: number) => (
+              <View key={`${item.id}-${idx}`} style={styles.pedidoItemRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.pedidoItemNombre}>{item.nombre}</Text>
+                  {!!item.formato && (
+                    <Text style={styles.pedidoItemSubtexto}>Formato: {item.formato}</Text>
+                  )}
+                  <Text style={styles.pedidoItemSubtexto}>
+                    {item.precio} € / unidad
+                  </Text>
+                </View>
+
+                <Text style={styles.pedidoItemCantidad}>{item.cantidad} uds</Text>
+
+                <Text style={styles.pedidoItemTotal}>
+                  {(item.precio * item.cantidad).toFixed(2)} €
+                </Text>
+              </View>
+            ))}
+          </View>
+        ))}
+      </View>
+    )}
+  </View>
+)}
       <CategoriaTabs
         categoriaPrincipal={categoriaPrincipal}
         setCategoriaPrincipal={setCategoriaPrincipal}
@@ -312,4 +379,66 @@ backButtonText: {
     padding: 12,
     paddingBottom: 100,
   },
+  pedidoActualBox: {
+  marginHorizontal: 12,
+  marginBottom: 12,
+  backgroundColor: "#0a0f3d",
+  borderRadius: 16,
+  overflow: "hidden",
+},
+pedidoActualHeader: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+  paddingHorizontal: 16,
+  paddingVertical: 14,
+},
+pedidoActualTitle: {
+  color: "#fff",
+  fontWeight: "700",
+  fontSize: 16,
+},
+pedidoActualArrow: {
+  color: "#fff",
+  fontSize: 16,
+  fontWeight: "700",
+},
+pedidoActualContenido: {
+  paddingHorizontal: 16,
+  paddingBottom: 14,
+},
+pedidoGrupo: {
+  marginBottom: 14,
+},
+pedidoGrupoTitulo: {
+  color: "#22c55e",
+  fontWeight: "700",
+  marginBottom: 8,
+},
+pedidoItemRow: {
+  flexDirection: "row",
+  alignItems: "center",
+  borderBottomWidth: 1,
+  borderBottomColor: "#1e3a8a",
+  paddingVertical: 10,
+  gap: 8,
+},
+pedidoItemNombre: {
+  color: "#fff",
+  fontWeight: "600",
+},
+pedidoItemSubtexto: {
+  color: "#93c5fd",
+  fontSize: 12,
+},
+pedidoItemCantidad: {
+  color: "#fff",
+  fontWeight: "600",
+},
+pedidoItemTotal: {
+  color: "#60a5fa",
+  fontWeight: "700",
+  minWidth: 75,
+  textAlign: "right",
+},
 });
