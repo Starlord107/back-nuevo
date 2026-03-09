@@ -56,6 +56,7 @@ export default function CartaScreen() {
 
   useEffect(() => {
     cargarProductos();
+    cargarPedidosMesa();
   }, []);
 
   const cargarProductos = async () => {
@@ -67,6 +68,16 @@ export default function CartaScreen() {
       Alert.alert("Error", "No se pudieron cargar los productos");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const cargarPedidosMesa = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/pedidos/mesa/${mesaId}`);
+      const data = await res.json();
+      console.log(data);
+    } catch (error) {
+      Alert.alert("Error", "No se pudieron cargar los pedidos");
     }
   };
 
