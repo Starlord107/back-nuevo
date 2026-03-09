@@ -45,46 +45,46 @@ export default function CategoriaTabs({
     const iconMap: any = {
       bebidas: {
         cocteles: {
-          normal: require("../assets/bebidas/cocteles.png"),
-          active: require("../assets/bebidas/cocteleswhite.png"),
+          normal: require("../public/bebidas/cocteles.png"),
+          active: require("../public/bebidas/cocteleswhite.png"),
         },
         vinos: {
-          normal: require("../assets/bebidas/vinos.png"),
-          active: require("../assets/bebidas/vinoswhite.png"),
+          normal: require("../public/bebidas/vinos.png"),
+          active: require("../public/bebidas/vinoswhite.png"),
         },
         sangrias: {
-          normal: require("../assets/bebidas/sangrias.png"),
-          active: require("../assets/bebidas/sangriaswhite.png"),
+          normal: require("../public/bebidas/sangrias.png"),
+          active: require("../public/bebidas/sangriaswhite.png"),
         },
         tragos: {
-          normal: require("../assets/bebidas/tragos.png"),
-          active: require("../assets/bebidas/tragoswhite.png"),
+          normal: require("../public/bebidas/tragos.png"),
+          active: require("../public/bebidas/tragoswhite.png"),
         },
         refrescos: {
-          normal: require("../assets/bebidas/refrescos.png"),
-          active: require("../assets/bebidas/refrescoswhite.png"),
+          normal: require("../public/bebidas/refrescos.png"),
+          active: require("../public/bebidas/refrescoswhite.png"),
         },
         cervezas: {
-          normal: require("../assets/bebidas/cervezas.png"),
-          active: require("../assets/bebidas/cervezaswhite.png"),
+          normal: require("../public/bebidas/cervezas.png"),
+          active: require("../public/bebidas/cervezaswhite.png"),
         },
       },
       comidas: {
         hamburguesas: {
-          normal: require("../assets/comidas/hamburguesas.png"),
-          active: require("../assets/comidas/hamburguesaswhite.png"),
+          normal: require("../public/comidas/hamburguesas.png"),
+          active: require("../public/comidas/hamburguesaswhite.png"),
         },
         tapas: {
-          normal: require("../assets/comidas/tapas.png"),
-          active: require("../assets/comidas/tapaswhite.png"),
+          normal: require("../public/comidas/tapas.png"),
+          active: require("../public/comidas/tapaswhite.png"),
         },
         bocadillos: {
-          normal: require("../assets/comidas/bocadillos.png"),
-          active: require("../assets/comidas/bocadilloswhite.png"),
+          normal: require("../public/comidas/bocadillos.png"),
+          active: require("../public/comidas/bocadilloswhite.png"),
         },
         platos: {
-          normal: require("../assets/comidas/platos.png"),
-          active: require("../assets/comidas/platoswhite.png"),
+          normal: require("../public/comidas/platos.png"),
+          active: require("../public/comidas/platoswhite.png"),
         },
       },
     };
