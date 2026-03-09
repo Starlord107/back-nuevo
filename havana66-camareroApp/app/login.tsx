@@ -11,17 +11,17 @@ import { router } from "expo-router";
 import { API_BASE_URL } from "../services/api";
 
 export default function LoginScreen() {
-  const [nombre, setNombre] = useState("");
+  const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
     try {
-const res = await fetch("https://backend-carta.onrender.com/api/camareros/login", {
+      const res = await fetch(`${API_BASE_URL}/api/camareros/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ nombre, password }),
+        body: JSON.stringify({ nombre: usuario, password }),
       });
 
       const data = await res.json();
