@@ -16,6 +16,9 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     try {
+      console.log("VALOR NOMBRE ANTES DEL FETCH:", nombre);
+      console.log("BODY QUE ENVÍO:", JSON.stringify({ nombre, password }));
+
       const res = await fetch(`${API_BASE_URL}/api/camareros/login`, {
         method: "POST",
         headers: {
