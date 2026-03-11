@@ -14,6 +14,7 @@ import { API_BASE_URL } from "../../services/api";
 import CategoriaTabs from "../../components/CategoriaTabs";
 import ProductoCard from "../../components/ProductoCard";
 import CarritoModal from "../../components/CarritoModal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type Formato = {
   id: number;
@@ -82,8 +83,13 @@ export default function CartaScreen() {
   };
 
   const cargarPedidosMesa = async () => {
+    const token = await AsyncStorage.getItem("token");
     try {
-      const res = await fetch(`${API_BASE_URL}/api/pedidos/mesa/${mesaId}`);
+      const res = await fetch(`${API_BASE_URL}/api/pedidos/mesa/${mesaId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const data = await res.json();
 
       if (!Array.isArray(data) || data.length === 0) {
@@ -194,6 +200,7 @@ export default function CartaScreen() {
   );
 
   const enviarPedido = async () => {
+    const token = await AsyncStorage.getItem("token");
     if (carrito.length === 0) {
       Alert.alert("Atención", "El carrito está vacío");
       return;
@@ -214,6 +221,7 @@ export default function CartaScreen() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });

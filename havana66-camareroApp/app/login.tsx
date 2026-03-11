@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   StyleSheet,
@@ -10,16 +10,29 @@ import {
 import { router } from "expo-router";
 import { API_BASE_URL } from "../services/api";
 import LogoIcon from "../components/LogoIcon";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginScreen() {
   const [nombre, setNombre] = useState("");
   const [password, setPassword] = useState("");
-
+  
+useEffect(() => {
+const comprobar = async () => {
+  try {
+  const token = await AsyncStorage.getItem("token");
+  if (token) {
+    router.replace("/mesas");
+  }
+} catch (error) {
+  console.error("Error al comprobar token:", error);
+}
+};
+comprobar();
+}, []);
   const handleLogin = async () => {
     try {
       console.log("VALOR NOMBRE ANTES DEL FETCH:", nombre);
       console.log("BODY QUE ENVÍO:", JSON.stringify({ nombre, password }));
-        
       const res = await fetch(`${API_BASE_URL}/api/camareros/login`, {
         method: "POST",
         headers: {
@@ -35,6 +48,8 @@ export default function LoginScreen() {
         Alert.alert("Error", data.error || "Credenciales incorrectas");
         return;
       }
+      await AsyncStorage.setItem("token", data.token);
+      await AsyncStorage.setItem("nombre", JSON.stringify(data.nombre));
 
       router.replace("/mesas");
     } catch (error) {

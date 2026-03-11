@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { API_BASE_URL } from "../services/api";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 type Mesa = {
   id: number;
   nombre: string;
@@ -20,10 +20,39 @@ type Mesa = {
 export default function MesasScreen() {
   const [mesas, setMesas] = useState<Mesa[]>([]);
   const [loading, setLoading] = useState(true);
+  const [usuario, setUsuario] = useState<any>(null);
+
+  const cargarUsuario = async () => {
+    try {
+      const usuarioGuardado = await AsyncStorage.getItem("usuario");
+      if (usuarioGuardado) {
+        setUsuario(JSON.parse(usuarioGuardado));
+      }
+    } catch (error) {
+      console.log("Error cargando usuario", error);
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("usuario");
+      router.replace("/");
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
+  };
 
   const cargarMesas = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/mesas`);
+      const token = await AsyncStorage.getItem("token");
+
+      const res = await fetch(`${API_BASE_URL}/api/mesas`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       const data = await res.json();
       setMesas(data);
     } catch (error) {
@@ -32,6 +61,10 @@ export default function MesasScreen() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    cargarUsuario();
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -43,29 +76,33 @@ export default function MesasScreen() {
     router.push(`/carta/${mesa.id}`);
   };
 
- const cerrarMesa = async (id: number) => {
-  try {
-    const resPedidos = await fetch(`${API_BASE_URL}/api/pedidos/mesa/${id}`);
-    const pedidos = await resPedidos.json();
+  const cerrarMesa = async (id: number) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
 
-    const total = Array.isArray(pedidos)
-      ? pedidos.reduce((accPedido: number, pedido: any) => {
-          const totalPedido = Array.isArray(pedido.items)
-            ? pedido.items.reduce(
-                (accItem: number, item: any) =>
-                  accItem + (Number(item.precio) || 0) * (Number(item.cantidad) || 0),
-                0
-              )
-            : 0;
+      const resPedidos = await fetch(`${API_BASE_URL}/api/pedidos/mesa/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-          return accPedido + totalPedido;
-        }, 0)
-      : 0;
+      const pedidos = await resPedidos.json();
 
-    Alert.alert(
-      "Cobrar mesa",
-      `Total a cobrar: ${total.toFixed(2)} €`,
-      [
+      const total = Array.isArray(pedidos)
+        ? pedidos.reduce((accPedido: number, pedido: any) => {
+            const totalPedido = Array.isArray(pedido.items)
+              ? pedido.items.reduce(
+                  (accItem: number, item: any) =>
+                    accItem + (Number(item.precio) || 0) * (Number(item.cantidad) || 0),
+                  0
+                )
+              : 0;
+
+            return accPedido + totalPedido;
+          }, 0)
+        : 0;
+
+      Alert.alert("Cobrar mesa", `Total a cobrar: ${total.toFixed(2)} €`, [
         { text: "Cancelar", style: "cancel" },
         {
           text: "Cobrar y cerrar",
@@ -74,11 +111,17 @@ export default function MesasScreen() {
             try {
               await fetch(`${API_BASE_URL}/api/pedidos/mesa/${id}`, {
                 method: "DELETE",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
               });
 
               await fetch(`${API_BASE_URL}/api/mesas/${id}/estado`, {
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
                 body: JSON.stringify({ estado: "libre" }),
               });
 
@@ -89,13 +132,12 @@ export default function MesasScreen() {
             }
           },
         },
-      ]
-    );
-  } catch (error) {
-    console.log("Error obteniendo total de la mesa", error);
-    Alert.alert("Error", "No se pudo calcular el total de la mesa");
-  }
-};
+      ]);
+    } catch (error) {
+      console.log("Error obteniendo total de la mesa", error);
+      Alert.alert("Error", "No se pudo calcular el total de la mesa");
+    }
+  };
 
   if (loading) {
     return (
@@ -107,7 +149,24 @@ export default function MesasScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Selecciona una mesa</Text>
+      <View style={styles.topBar}>
+        <Text style={styles.title}>Selecciona una mesa</Text>
+
+        <View style={styles.topButtons}>
+          {usuario?.rol === "admin" && (
+            <TouchableOpacity
+              style={styles.adminButton}
+              onPress={() => router.push("/admin")}
+            >
+              <Text style={styles.adminButtonText}>Admin</Text>
+            </TouchableOpacity>
+          )}
+
+          <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+            <Text style={styles.logoutButtonText}>Salir</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
       <FlatList
         data={mesas}
@@ -136,9 +195,7 @@ export default function MesasScreen() {
                 style={styles.cerrarMesaButton}
                 onPress={() => cerrarMesa(item.id)}
               >
-                <Text style={styles.cerrarMesaButtonText}>
-                  Cerrar Mesa
-                </Text>
+                <Text style={styles.cerrarMesaButtonText}>Cerrar Mesa</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -160,12 +217,42 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  topBar: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 18,
+  },
+  topButtons: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   title: {
     fontSize: 26,
     fontWeight: "bold",
-    textAlign: "center",
     color: "#1f40ff",
-    marginBottom: 18,
+    flex: 1,
+  },
+  adminButton: {
+    backgroundColor: "#1f40ff",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    marginRight: 8,
+  },
+  adminButtonText: {
+    color: "#fff",
+    fontWeight: "600",
+  },
+  logoutButton: {
+    backgroundColor: "#1f2937",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+  logoutButtonText: {
+    color: "#fff",
+    fontWeight: "600",
   },
   cardWrapper: {
     flex: 1,
