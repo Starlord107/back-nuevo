@@ -149,10 +149,10 @@ export default function MesasScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.topBar}>
-        <Text style={styles.title}>Selecciona una mesa</Text>
 
-        <View style={styles.topButtons}>
+
+        
+      <View style={styles.topButtonAdminSalir}>
           {usuario?.rol === "admin" && (
             <TouchableOpacity
               style={styles.adminButton}
@@ -165,8 +165,7 @@ export default function MesasScreen() {
           <TouchableOpacity style={styles.logoutButton} onPress={logout}>
             <Text style={styles.logoutButtonText}>Salir</Text>
           </TouchableOpacity>
-        </View>
-      </View>
+        </View> 
 
       <FlatList
         data={mesas}
@@ -226,6 +225,13 @@ const styles = StyleSheet.create({
   topButtons: {
     flexDirection: "row",
     alignItems: "center",
+    
+    
+  },
+  topButtonAdminSalir: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 26,
