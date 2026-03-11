@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
+const {verificarToken} = require("../middleware/auth");
 
-router.post("/", async (req, res) => {
+router.post("/", verificarToken, async (req, res) => {
     const { mesa_id, productos, total } = req.body;
 
     try {
@@ -26,7 +27,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.get("/mesa/:mesaId", async (req, res) => {
+router.get("/mesa/:mesaId", verificarToken, async (req, res) => {
     const { mesaId } = req.params;
 
     try {
@@ -68,7 +69,7 @@ router.get("/mesa/:mesaId", async (req, res) => {
     }
 });
 
-router.delete("/mesa/:mesaId", async (req, res) => {
+router.delete("/mesa/:mesaId", verificarToken, async (req, res) => {
     const { mesaId } = req.params;
 
     try {
@@ -88,7 +89,7 @@ router.delete("/mesa/:mesaId", async (req, res) => {
         res.status(500).json({ error: e.message });
     }
 });
-router.get("/pendientes-impresion", async (req, res) => {
+router.get("/pendientes-impresion", verificarToken, async (req, res) => {
   try {
     const result = await db.query(`
       SELECT 
@@ -115,7 +116,7 @@ router.get("/pendientes-impresion", async (req, res) => {
     res.status(500).json({ error: "Error obteniendo pedidos pendientes" });
   }
 });
-router.put("/:id/marcar-impreso", async (req, res) => {
+router.put("/:id/marcar-impreso", verificarToken, async (req, res) => {
   const { id } = req.params;
 
   try {
