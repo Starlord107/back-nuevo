@@ -49,11 +49,12 @@ comprobar();
         return;
       }
       await AsyncStorage.setItem("token", data.token);
-      await AsyncStorage.setItem("nombre", JSON.stringify(data.nombre));
+      await AsyncStorage.setItem("usuario", JSON.stringify(data.usuario));
 
       router.replace("/mesas");
     } catch (error) {
-      Alert.alert("Error", "No se pudo conectar con el servidor");
+      console.log("Error en el login Front:", error);
+      Alert.alert("Error",String(error));
     }
   };
 

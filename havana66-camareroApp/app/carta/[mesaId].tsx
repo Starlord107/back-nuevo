@@ -236,6 +236,7 @@ export default function CartaScreen() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ estado: "ocupada" }),
       });
