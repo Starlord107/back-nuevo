@@ -9,7 +9,7 @@ export default function LogoIcon({ size = 80 }: Props) {
   return (
     <View style={styles.container}>
       <Image
-        source={require("../assets/public/Havana662.png")}
+        source={require("../assets/public/havana663.png")}
         style={[styles.logo, { width: size, height: size }]}
         resizeMode="contain"
       />
