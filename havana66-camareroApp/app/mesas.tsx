@@ -8,20 +8,28 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { router, useFocusEffect } from "expo-router";
+import { router, useFocusEffect,useLocalSearchParams } from "expo-router";
 import { API_BASE_URL } from "../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 type Mesa = {
   id: number;
   nombre: string;
   estado: "libre" | "ocupada";
+  // hay que poner los datos que faltan
+  zona: string;
+  pos_x: number;
+  pos_y: number;
 };
 
 export default function MesasScreen() {
   const [mesas, setMesas] = useState<Mesa[]>([]);
+  
   const [loading, setLoading] = useState(true);
   const [usuario, setUsuario] = useState<any>(null);
-
+  const { zona } = useLocalSearchParams<{zona: string}>();
+const mesasFiltradas = zona
+  ? mesas.filter((mesa) => mesa.zona === zona)
+  : mesas;
   const cargarUsuario = async () => {
     try {
       const usuarioGuardado = await AsyncStorage.getItem("usuario");
@@ -161,6 +169,19 @@ export default function MesasScreen() {
               <Text style={styles.adminButtonText}>Admin</Text>
             </TouchableOpacity>
           )}
+          <Text style={styles.title}>
+  {zona === "terraza"
+    ? "Terraza"
+    : zona === "interior"
+    ? "Interior"
+    : zona === "barra"
+    ? "Barra"
+    : "Mesas"}
+</Text>
+
+<TouchableOpacity onPress={() => router.push("/seleccionar-zona")}>
+  <Text style={styles.cambiarZonaText}>← Cambiar zona</Text>
+</TouchableOpacity>
 
           <TouchableOpacity style={styles.logoutButton} onPress={logout}>
             <Text style={styles.logoutButtonText}>Salir</Text>
@@ -168,7 +189,7 @@ export default function MesasScreen() {
         </View> 
 
       <FlatList
-        data={mesas}
+        data={mesasFiltradas}
         keyExtractor={(item) => String(item.id)}
         numColumns={2}
         renderItem={({ item }) => (
@@ -239,6 +260,13 @@ const styles = StyleSheet.create({
     color: "#1f40ff",
     flex: 1,
   },
+  cambiarZonaText: {
+  color: "#1f40ff",
+  fontWeight: "600",
+  textAlign: "center",
+  marginTop: 10,
+  marginBottom: 12,
+},
   adminButton: {
     backgroundColor: "#1f40ff",
     paddingHorizontal: 14,

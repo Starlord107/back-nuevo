@@ -12,6 +12,8 @@ import { API_BASE_URL } from "../services/api";
 import LogoIcon from "../components/LogoIcon";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+
+
 export default function LoginScreen() {
   const [nombre, setNombre] = useState("");
   const [password, setPassword] = useState("");
@@ -21,7 +23,7 @@ const comprobar = async () => {
   try {
   const token = await AsyncStorage.getItem("token");
   if (token) {
-    router.replace("/mesas");
+    router.replace("/seleccionar-zona");
   }
 } catch (error) {
   console.error("Error al comprobar token:", error);
@@ -51,7 +53,7 @@ comprobar();
       await AsyncStorage.setItem("token", data.token);
       await AsyncStorage.setItem("usuario", JSON.stringify(data.usuario));
 
-      router.replace("/mesas");
+      router.replace("/seleccionar-zona");
     } catch (error) {
       console.log("Error en el login Front:", error);
       Alert.alert("Error",String(error));
