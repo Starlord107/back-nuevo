@@ -160,29 +160,7 @@ const mesasFiltradas = zona
 
 
         
-      <View style={styles.topButtonAdminSalir}>
-          {usuario?.rol === "admin" && (
-            <TouchableOpacity
-              style={styles.adminButton}
-              onPress={() => router.push("/admin")}
-            >
-              <Text style={styles.adminButtonText}>Admin</Text>
-            </TouchableOpacity>
-          )}
-          <Text style={[styles.title, { textAlign: "center" }]}>
-  {zona === "terraza"
-    ? "Terraza"
-    : zona === "interior"
-    ? "Interior"
-   
-    : "Mesas"}
-</Text>
-
-
-          <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-            <Text style={styles.logoutButtonText}>Salir</Text>
-          </TouchableOpacity>
-        </View> 
+    
 
     <View style={styles.plano}>
   {mesasFiltradas.map((item) => (
@@ -298,17 +276,8 @@ cerrarMesaMiniText: {
   fontSize: 12,
   fontWeight: "600",
 },
-  topButtonAdminSalir: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "bold",
-    color: "#1f40ff",
-    flex: 1,
-  },
+
+ 
   cambiarZonaText: {
     backgroundColor: "#1f40ff",
   fontWeight: "600",
@@ -319,26 +288,7 @@ cerrarMesaMiniText: {
   borderRadius: 26,
 color:"white"
 },
-  adminButton: {
-    backgroundColor: "#1f40ff",
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 12,
-    marginRight: 8,
-  },
-  adminButtonText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
-  logoutButton: {
-    backgroundColor: "#1f2937",
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 12,
-  },
-  logoutButtonText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
+ 
+
   
 });

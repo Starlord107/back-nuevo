@@ -264,7 +264,7 @@ export default function CartaScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.push("/mesas")}>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.push("/seleccionar-zona")}>
           <Text style={styles.backButtonText}>← Mesas</Text>
         </TouchableOpacity>
 

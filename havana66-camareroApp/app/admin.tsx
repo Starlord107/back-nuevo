@@ -46,7 +46,7 @@ export default function AdminScreen() {
       setNombre("");
       setEmail("");
       setPassword("");
-      setRol("staff");
+      setRol("empleado");
     } catch (error) {
       Alert.alert("Error", "No se pudo conectar con el servidor");
     }
@@ -54,7 +54,7 @@ export default function AdminScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Panel Admin</Text>
+      <Text style={styles.title}>Panel Administrador</Text>
 
       <TextInput
         style={styles.input}
@@ -81,11 +81,11 @@ export default function AdminScreen() {
 
       <View style={styles.rolRow}>
         <TouchableOpacity
-          style={[styles.rolButton, rol === "staff" && styles.rolButtonActive]}
-          onPress={() => setRol("staff")}
+          style={[styles.rolButton, rol === "empleado" && styles.rolButtonActive]}
+          onPress={() => setRol("empleado")}
         >
-          <Text style={[styles.rolButtonText, rol === "staff" && styles.rolButtonTextActive]}>
-            Staff
+          <Text style={[styles.rolButtonText, rol === "empleado" && styles.rolButtonTextActive]}>
+            Empleado
           </Text>
         </TouchableOpacity>
 

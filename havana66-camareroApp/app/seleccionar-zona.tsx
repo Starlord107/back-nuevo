@@ -9,15 +9,18 @@ import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SeleccionZonaScreen() {
-
   const [usuario, setUsuario] = useState<any>(null);
 
   useEffect(() => {
     const cargarUsuario = async () => {
-      const user = await AsyncStorage.getItem("usuario");
+      try {
+        const user = await AsyncStorage.getItem("usuario");
 
-      if (user) {
-        setUsuario(JSON.parse(user));
+        if (user) {
+          setUsuario(JSON.parse(user));
+        }
+      } catch (error) {
+        console.log("Error cargando usuario", error);
       }
     };
 
@@ -25,33 +28,30 @@ export default function SeleccionZonaScreen() {
   }, []);
 
   const logout = async () => {
-    await AsyncStorage.removeItem("token");
-    await AsyncStorage.removeItem("usuario");
-
-    router.replace("/");
+    try {
+      await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("usuario");
+      router.replace("/");
+    } catch (error) {
+      console.log("Error al cerrar sesión", error);
+    }
   };
 
   return (
     <View style={styles.container}>
-
       <View style={styles.topBar}>
         <View>
-          <Text style={styles.subtitle}>
+          <Text style={styles.title}>
             {usuario?.nombre ? `Hola, ${usuario.nombre}` : ""}
           </Text>
         </View>
 
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={logout}
-        >
+        <TouchableOpacity style={styles.logoutButton} onPress={logout}>
           <Text style={styles.logoutText}>Salir</Text>
         </TouchableOpacity>
       </View>
 
-
       <View style={styles.buttonsContainer}>
-
         <TouchableOpacity
           style={styles.zoneButton}
           onPress={() => router.push("/mesas?zona=terraza")}
@@ -60,7 +60,6 @@ export default function SeleccionZonaScreen() {
           <Text style={styles.zoneSubtitle}>Mesas exteriores</Text>
         </TouchableOpacity>
 
-
         <TouchableOpacity
           style={styles.zoneButton}
           onPress={() => router.push("/mesas?zona=interior")}
@@ -68,18 +67,22 @@ export default function SeleccionZonaScreen() {
           <Text style={styles.zoneTitle}>Interior</Text>
           <Text style={styles.zoneSubtitle}>Sala interior</Text>
         </TouchableOpacity>
-
-
-        
-
+          {usuario?.rol === "admin" && (
+        <TouchableOpacity
+          style={styles.adminButton}
+          onPress={() => router.push("/admin")}
+        >
+          <Text style={styles.adminButtonText}>Panel Admin</Text>
+        </TouchableOpacity>
+      )}
       </View>
 
+    
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
     backgroundColor: "#f4f7fb",
@@ -91,21 +94,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
+    marginBottom: 40,
   },
 
   
 
-  subtitle: {
-    fontSize: 26,
+  title: {
+    marginTop: 6,
+    fontSize: 30,
     color: "#1f40ff",
-    
   },
 
   logoutButton: {
-    backgroundColor: "#1f2937",
-    paddingHorizontal: 16,
+    backgroundColor: "#eb2d1c",
+    paddingHorizontal: 30,
     paddingVertical: 10,
     borderRadius: 12,
+    marginTop:10,
   },
 
   logoutText: {
@@ -117,7 +122,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     gap: 20,
-    marginBottom: 250,
+    marginBottom:150
   },
 
   zoneButton: {
@@ -125,6 +130,7 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     paddingVertical: 30,
     paddingHorizontal: 24,
+    
   },
 
   zoneTitle: {
@@ -139,4 +145,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 
+  adminButton: {
+    backgroundColor: "#111827",
+    paddingVertical: 14,
+    borderRadius: 14,
+    alignItems: "center",
+  },
+
+  adminButtonText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 16,
+  },
 });
