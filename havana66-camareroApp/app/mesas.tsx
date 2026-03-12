@@ -169,58 +169,61 @@ const mesasFiltradas = zona
               <Text style={styles.adminButtonText}>Admin</Text>
             </TouchableOpacity>
           )}
-          <Text style={styles.title}>
+          <Text style={[styles.title, { textAlign: "center" }]}>
   {zona === "terraza"
     ? "Terraza"
     : zona === "interior"
     ? "Interior"
-    : zona === "barra"
-    ? "Barra"
+   
     : "Mesas"}
 </Text>
 
-<TouchableOpacity onPress={() => router.push("/seleccionar-zona")}>
-  <Text style={styles.cambiarZonaText}>← Cambiar zona</Text>
-</TouchableOpacity>
 
           <TouchableOpacity style={styles.logoutButton} onPress={logout}>
             <Text style={styles.logoutButtonText}>Salir</Text>
           </TouchableOpacity>
         </View> 
 
-      <FlatList
-        data={mesasFiltradas}
-        keyExtractor={(item) => String(item.id)}
-        numColumns={2}
-        renderItem={({ item }) => (
-          <View style={styles.cardWrapper}>
-            <TouchableOpacity
-              style={[
-                styles.mesaCard,
-                {
-                  backgroundColor:
-                    item.estado === "ocupada" ? "#dc2626" : "#16a34a",
-                },
-              ]}
-              onPress={() => seleccionarMesa(item)}
-            >
-              <Text style={styles.mesaText}>{item.nombre}</Text>
-              <Text style={styles.mesaSubtext}>
-                {item.estado === "ocupada" ? "Ocupada" : "Libre"}
-              </Text>
-            </TouchableOpacity>
+    <View style={styles.plano}>
+  {mesasFiltradas.map((item) => (
+    <View
+      key={item.id}
+      style={[
+        styles.mesaPlanoWrapper,
+        {
+          left: item.pos_x,
+          top: item.pos_y,
+        },
+      ]}
+    >
+      <TouchableOpacity
+        style={[
+          styles.mesaPlano,
+          {
+            backgroundColor:
+              item.estado === "ocupada" ? "#dc2626" : "#16a34a",
+          },
+        ]}
+        onPress={() => seleccionarMesa(item)}
+      >
+        <Text style={styles.mesaPlanoText}>{item.nombre}</Text>
+      </TouchableOpacity>
 
-            {item.estado === "ocupada" && (
-              <TouchableOpacity
-                style={styles.cerrarMesaButton}
-                onPress={() => cerrarMesa(item.id)}
-              >
-                <Text style={styles.cerrarMesaButtonText}>Cerrar Mesa</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        )}
-      />
+      {item.estado === "ocupada" && (
+        <TouchableOpacity
+          style={styles.cerrarMesaMiniButton}
+          onPress={() => cerrarMesa(item.id)}
+        >
+          <Text style={styles.cerrarMesaMiniText}>Cerrar</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  ))}
+</View>
+           <TouchableOpacity onPress={() => router.push("/seleccionar-zona")}>
+  <Text style={[styles.cambiarZonaText, { textAlign: "center" }, { marginBottom: 100 },]}> Cambiar zona</Text>
+</TouchableOpacity>
+ 
     </View>
   );
 }
@@ -249,6 +252,52 @@ const styles = StyleSheet.create({
     
     
   },
+  plano: {
+  
+  position: "relative",
+  backgroundColor: "#ffffff",
+  borderRadius: 18,
+  marginTop: 50,
+  overflow: "hidden",
+height:470,
+},
+
+mesaPlanoWrapper: {
+  position: "absolute",
+  width: 30,
+  
+  alignItems: "center",
+},
+
+mesaPlano: {
+  width: 58,
+  minHeight: 46,
+  borderRadius: 12,
+  justifyContent: "center",
+  alignItems: "center",
+  padding: 6,
+},
+
+mesaPlanoText: {
+  color: "#fff",
+  fontWeight: "bold",
+  fontSize: 11,
+  textAlign: "center",
+},
+
+cerrarMesaMiniButton: {
+  marginTop: 6,
+  backgroundColor: "#1f2937",
+  paddingHorizontal: 10,
+  paddingVertical: 6,
+  borderRadius: 10,
+},
+
+cerrarMesaMiniText: {
+  color: "#fff",
+  fontSize: 12,
+  fontWeight: "600",
+},
   topButtonAdminSalir: {
     flexDirection: "row",
     alignItems: "center",
@@ -261,11 +310,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cambiarZonaText: {
-  color: "#1f40ff",
+    backgroundColor: "#1f40ff",
   fontWeight: "600",
   textAlign: "center",
   marginTop: 10,
   marginBottom: 12,
+  fontSize:25,
+  borderRadius: 26,
+color:"white"
 },
   adminButton: {
     backgroundColor: "#1f40ff",
@@ -288,37 +340,5 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
   },
-  cardWrapper: {
-    flex: 1,
-    margin: 8,
-  },
-  mesaCard: {
-    minHeight: 110,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 16,
-  },
-  mesaText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 20,
-  },
-  mesaSubtext: {
-    color: "#fff",
-    marginTop: 6,
-    fontSize: 14,
-  },
-  cerrarMesaButton: {
-    marginTop: 8,
-    backgroundColor: "#1f2937",
-    paddingVertical: 10,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  cerrarMesaButtonText: {
-    color: "#fff",
-    fontSize: 13,
-    fontWeight: "600",
-  },
+  
 });

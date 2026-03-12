@@ -36,7 +36,6 @@ export default function SeleccionZonaScreen() {
 
       <View style={styles.topBar}>
         <View>
-          <Text style={styles.title}>Selecciona zona</Text>
           <Text style={styles.subtitle}>
             {usuario?.nombre ? `Hola, ${usuario.nombre}` : ""}
           </Text>
@@ -71,13 +70,7 @@ export default function SeleccionZonaScreen() {
         </TouchableOpacity>
 
 
-        <TouchableOpacity
-          style={styles.zoneButton}
-          onPress={() => router.push("/mesas?zona=barra")}
-        >
-          <Text style={styles.zoneTitle}>Barra</Text>
-          <Text style={styles.zoneSubtitle}>Zona barra</Text>
-        </TouchableOpacity>
+        
 
       </View>
 
@@ -98,19 +91,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 40,
   },
 
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#1f40ff",
-  },
+  
 
   subtitle: {
-    marginTop: 6,
-    fontSize: 16,
-    color: "#4b5563",
+    fontSize: 26,
+    color: "#1f40ff",
+    
   },
 
   logoutButton: {
@@ -129,6 +117,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     gap: 20,
+    marginBottom: 250,
   },
 
   zoneButton: {

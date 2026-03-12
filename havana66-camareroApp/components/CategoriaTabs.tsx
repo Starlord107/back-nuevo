@@ -49,11 +49,8 @@ export default function CategoriaTabs({
       </View>
 
       {/* SUBTABS */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.subTabsContainer}
-      >
+     <View style={styles.subTabsContainer}>
+
         <View style={styles.subTabsRow}>
           {subtabs.map((sub) => {
             const active = categoriaSecundaria === sub;
@@ -71,8 +68,7 @@ export default function CategoriaTabs({
             );
           })}
         </View>
-      </ScrollView>
-
+          </View>
     </View>
   );
 }
@@ -128,6 +124,11 @@ const styles = StyleSheet.create({
 
   subTabsRow: {
     flexDirection: "row",
+    paddingLeft: 20,
+    paddingRight: 20,
+    
+    flexWrap: "wrap",
+    justifyContent: "center",
   },
 
   subTab: {
