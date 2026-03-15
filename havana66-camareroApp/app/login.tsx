@@ -17,7 +17,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function LoginScreen() {
   const [nombre, setNombre] = useState("");
   const [password, setPassword] = useState("");
-  
+  const [mostrarPassword,setMostarPassword]=useState(false);
 useEffect(() => {
 const comprobar = async () => {
   try {
@@ -78,10 +78,12 @@ comprobar();
         placeholder="Contraseña"
         value={password}
         onChangeText={setPassword}
-        secureTextEntry
+        secureTextEntry={!mostrarPassword}
+        
       />
-
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+<TouchableOpacity onPress={() => setMostarPassword(!mostrarPassword)}>
+  <Text>👁</Text>
+</TouchableOpacity>      <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Entrar</Text>
       </TouchableOpacity>
     </View>

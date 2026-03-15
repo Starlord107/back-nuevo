@@ -11,6 +11,7 @@ import {
 import { router, useFocusEffect,useLocalSearchParams } from "expo-router";
 import { API_BASE_URL } from "../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Image } from "react-native";
 type Mesa = {
   id: number;
   nombre: string;
@@ -160,7 +161,10 @@ const mesasFiltradas = zona
 
 
         
-    
+               <TouchableOpacity  style={styles.cambiarZonaButton} onPress={() => router.push("/seleccionar-zona")}>
+  
+  <Text style={[styles.cambiarZonaText, { textAlign: "center" }, { marginTop:20 },]}> Cambiar zona</Text>
+</TouchableOpacity>
 
     <View style={styles.plano}>
   {mesasFiltradas.map((item) => (
@@ -192,15 +196,13 @@ const mesasFiltradas = zona
           style={styles.cerrarMesaMiniButton}
           onPress={() => cerrarMesa(item.id)}
         >
-          <Text style={styles.cerrarMesaMiniText}>Cerrar</Text>
+          <Image source={require("../assets/iconos/billetes.png")} style={{ width: 50, height: 50 }} />
         </TouchableOpacity>
       )}
     </View>
   ))}
 </View>
-           <TouchableOpacity onPress={() => router.push("/seleccionar-zona")}>
-  <Text style={[styles.cambiarZonaText, { textAlign: "center" }, { marginBottom: 100 },]}> Cambiar zona</Text>
-</TouchableOpacity>
+
  
     </View>
   );
@@ -230,6 +232,19 @@ const styles = StyleSheet.create({
     
     
   },
+  cambiarZonaButton: {
+    backgroundColor: "#1f40ff",
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 32,
+    
+  },
+  cambiarZonaText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 18,
+    marginBottom  : 10,
+  },
   plano: {
   
   position: "relative",
@@ -237,23 +252,26 @@ const styles = StyleSheet.create({
   borderRadius: 18,
   marginTop: 50,
   overflow: "hidden",
-height:470,
+height:550,
 },
 
 mesaPlanoWrapper: {
   position: "absolute",
   width: 30,
   
+  
+    
   alignItems: "center",
 },
 
 mesaPlano: {
-  width: 58,
-  minHeight: 46,
-  borderRadius: 12,
+  width: 60,
+  height: 40,
+  padding: 8,
+  borderRadius: 18,
   justifyContent: "center",
+  
   alignItems: "center",
-  padding: 6,
 },
 
 mesaPlanoText: {
@@ -264,30 +282,18 @@ mesaPlanoText: {
 },
 
 cerrarMesaMiniButton: {
-  marginTop: 6,
-  backgroundColor: "#1f2937",
-  paddingHorizontal: 10,
-  paddingVertical: 6,
-  borderRadius: 10,
+  borderRadius: 30,
+  height: 50,
+  width: 50,
+  
+  backgroundImage:"assets/iconos/billetes.png"
 },
 
-cerrarMesaMiniText: {
-  color: "#fff",
-  fontSize: 12,
-  fontWeight: "600",
-},
+
 
  
-  cambiarZonaText: {
-    backgroundColor: "#1f40ff",
-  fontWeight: "600",
-  textAlign: "center",
-  marginTop: 10,
-  marginBottom: 12,
-  fontSize:25,
-  borderRadius: 26,
-color:"white"
-},
+  
+
  
 
   
