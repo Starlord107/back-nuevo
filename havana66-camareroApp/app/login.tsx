@@ -11,6 +11,7 @@ import { router } from "expo-router";
 import { API_BASE_URL } from "../services/api";
 import LogoIcon from "../components/LogoIcon";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import IconEye from "@/components/iconEye";
 
 
 
@@ -81,9 +82,11 @@ comprobar();
         secureTextEntry={!mostrarPassword}
         
       />
-<TouchableOpacity onPress={() => setMostarPassword(!mostrarPassword)}>
-  <Text>👁</Text>
-</TouchableOpacity>      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+<TouchableOpacity style={styles.buttonshowpassword } onPress={() => setMostarPassword(!mostrarPassword)}>
+  <IconEye   />
+  <Text  style={styles.buttonshowpasswordText}> Mostrar Constraseña</Text>
+</TouchableOpacity>      
+<TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Entrar</Text>
       </TouchableOpacity>
     </View>
@@ -103,6 +106,26 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#1f40ff",
     marginBottom: 8,
+  },
+  buttonshowpassword:{
+    backgroundColor: "#38a855",
+    padding: 15,
+    borderRadius: 14,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  iconEye:
+  {
+    justifyContent: "center",
+    alignItems: "center",
+    alignContent: "center",
+    
+  },
+  buttonshowpasswordText:{
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
   },
   subtitle: {
     textAlign: "center",
