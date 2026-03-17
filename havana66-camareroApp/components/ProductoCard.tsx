@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   Image,
+  ImageBackground,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -48,7 +49,7 @@ export default function ProductoCard({ producto, añadirAlCarrito }: Props) {
     } else {
       setFormatoActual(null);
     }
-  }, [producto]);
+  }, [producto, tieneFormatos]);
 
   const precioFinal = useMemo(() => {
     if (tieneFormatos) {
@@ -66,20 +67,16 @@ export default function ProductoCard({ producto, añadirAlCarrito }: Props) {
   const seleccionarFormato = () => {
     if (!tieneFormatos) return;
 
-    Alert.alert(
-      "Selecciona un formato",
-      producto.nombre,
-      [
-        ...producto.formatos!.map((formato) => ({
-          text: `${formato.nombre} - ${Number(formato.precio).toFixed(2)} €`,
-          onPress: () => setFormatoActual(formato),
-        })),
-        {
-          text: "Cancelar",
-          style: "cancel" as const,
-        },
-      ]
-    );
+    Alert.alert("Selecciona un formato", producto.nombre, [
+      ...producto.formatos!.map((formato) => ({
+        text: `${formato.nombre} - ${Number(formato.precio).toFixed(2)} €`,
+        onPress: () => setFormatoActual(formato),
+      })),
+      {
+        text: "Cancelar",
+        style: "cancel" as const,
+      },
+    ]);
   };
 
   const agregar = () => {
@@ -105,16 +102,30 @@ export default function ProductoCard({ producto, añadirAlCarrito }: Props) {
 
   return (
     <View style={styles.card}>
-      {imageUri ? (
-        <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
-      ) : (
-        <View style={styles.imagePlaceholder}>
-          <Text style={styles.imagePlaceholderText}>Sin imagen</Text>
-        </View>
-      )}
+      <ImageBackground
+        source={require("../assets/Fondos/fondofinal.png")}
+        style={styles.imageContainer}
+        imageStyle={styles.cardBackground}
+        resizeMode="cover"
+      >
+        {imageUri ? (
+          <Image
+            source={{ uri: imageUri }}
+            style={styles.image}
+            resizeMode="contain"
+          />
+        ) : (
+          <View style={styles.imagePlaceholder}>
+            <Text style={styles.imagePlaceholderText}>Sin imagen</Text>
+          </View>
+        )}
+      </ImageBackground>
 
       {tieneFormatos && (
-        <TouchableOpacity style={styles.selectorFormato} onPress={seleccionarFormato}>
+        <TouchableOpacity
+          style={styles.selectorFormato}
+          onPress={seleccionarFormato}
+        >
           <Text style={styles.selectorFormatoText}>
             {formatoActual
               ? `${formatoActual.nombre} - ${Number(formatoActual.precio).toFixed(2)} €`
@@ -148,13 +159,17 @@ export default function ProductoCard({ producto, añadirAlCarrito }: Props) {
         disabled={cantidad === 0}
         style={[
           styles.agregarButton,
-          cantidad === 0 ? styles.agregarButtonDisabled : styles.agregarButtonEnabled,
+          cantidad === 0
+            ? styles.agregarButtonDisabled
+            : styles.agregarButtonEnabled,
         ]}
       >
         <Text
           style={[
             styles.agregarButtonText,
-            cantidad === 0 ? styles.agregarButtonTextDisabled : styles.agregarButtonTextEnabled,
+            cantidad === 0
+              ? styles.agregarButtonTextDisabled
+              : styles.agregarButtonTextEnabled,
           ]}
         >
           Agregar
@@ -177,26 +192,41 @@ const styles = StyleSheet.create({
     shadowRadius: 15,
     elevation: 4,
   },
-  image: {
-    width: "100%",
-    height: 180,
+
+  imageContainer: {
     borderRadius: 12,
+    overflow: "hidden",
     marginBottom: 12,
-    backgroundColor: "rgba(0,0,0,0.10)",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#e5e7eb",
   },
+
+  cardBackground: {
+    borderRadius: 12,
+  },
+
+  image: {
+    width: 600,
+    height: 600,
+    borderRadius: 12,
+    backgroundColor: "transparent",
+  },
+
   imagePlaceholder: {
     width: "100%",
-    height: 180,
+    height: "100%",
     borderRadius: 12,
-    marginBottom: 12,
-    backgroundColor: "rgba(0,0,0,0.10)",
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.45)",
   },
+
   imagePlaceholderText: {
     color: "#64748b",
     fontWeight: "600",
   },
+
   selectorFormato: {
     width: "100%",
     marginBottom: 16,
@@ -204,21 +234,25 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: "#1f40ff",
   },
+
   selectorFormatoText: {
     color: "#fff",
     fontWeight: "700",
     textAlign: "center",
   },
+
   infoContainer: {
     marginBottom: 16,
     alignItems: "center",
   },
+
   nombre: {
     fontSize: 18,
     fontWeight: "700",
     color: "#1f40ff",
     textAlign: "center",
   },
+
   precio: {
     color: "#1f40ff",
     fontWeight: "700",
@@ -226,6 +260,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontSize: 16,
   },
+
   contadorContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -233,6 +268,7 @@ const styles = StyleSheet.create({
     gap: 16,
     marginBottom: 12,
   },
+
   contadorButton: {
     backgroundColor: "#1E40FF",
     width: 36,
@@ -241,12 +277,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+
   contadorButtonText: {
     color: "#fff",
     fontSize: 20,
     fontWeight: "700",
     lineHeight: 22,
   },
+
   cantidadText: {
     color: "#1f40ff",
     fontSize: 20,
@@ -254,25 +292,31 @@ const styles = StyleSheet.create({
     minWidth: 24,
     textAlign: "center",
   },
+
   agregarButton: {
     width: "100%",
     paddingVertical: 12,
     borderRadius: 12,
     alignItems: "center",
   },
+
   agregarButtonDisabled: {
     backgroundColor: "#d1d5db",
   },
+
   agregarButtonEnabled: {
     backgroundColor: "#16a34a",
   },
+
   agregarButtonText: {
     fontWeight: "700",
     fontSize: 16,
   },
+
   agregarButtonTextDisabled: {
     color: "#6b7280",
   },
+
   agregarButtonTextEnabled: {
     color: "#fff",
   },

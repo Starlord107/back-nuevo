@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {  ScrollView, StyleSheet, Text, TouchableOpacity, View ,ImageSourcePropType as ImageSource} from "react-native";
 
 type Props = {
   categoriaPrincipal: string;
@@ -12,10 +12,11 @@ export default function CategoriaTabs({
   setCategoriaPrincipal,
   categoriaSecundaria,
   setCategoriaSecundaria,
+
 }: Props) {
 
   const categorias: Record<string, string[]> = {
-    Bebidas: ["Cocteles", "Vinos", "Sangrias", "Tragos", "Refrescos", "Cervezas"],
+    Bebidas: ["Cócteles", "Vinos", "Sangrías", "Tragos", "Refrescos", "Cervezas"],
     Comidas: ["Hamburguesas", "Tapas", "Bocadillos", "Platos"],
   };
 
@@ -80,7 +81,6 @@ const styles = StyleSheet.create({
   },
 
   mainTabsContainer: {
-    backgroundColor: "#fff",
     borderWidth: 1,
     borderColor: "#8fdfff",
     borderRadius: 18,
@@ -90,6 +90,8 @@ const styles = StyleSheet.create({
 
   mainTabsRow: {
     flexDirection: "row",
+
+
   },
 
   mainTab: {

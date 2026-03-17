@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -50,6 +50,7 @@ type PedidoExistenteItem = {
 };
 
 export default function CartaScreen() {
+const flatListRef=useRef<FlatList<Producto>>(null);
   const { mesaId } = useLocalSearchParams<{ mesaId: string }>();
 
   const [productos, setProductos] = useState<Producto[]>([]);
@@ -69,7 +70,11 @@ export default function CartaScreen() {
     cargarProductos();
     cargarPedidosMesa();
   }, [mesaId]);
-
+  useEffect(() => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToOffset({ animated: true, offset: 0 });
+    }
+  }, [categoriaPrincipal, categoriaSecundaria]);
   const cargarProductos = async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/productos`);
@@ -331,6 +336,7 @@ export default function CartaScreen() {
       />
 
       <FlatList
+        ref={flatListRef}
         style={{ flex: 1 }}
         data={productosFiltrados}
         keyExtractor={(item) => String(item.id)}
